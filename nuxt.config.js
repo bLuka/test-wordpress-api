@@ -24,7 +24,12 @@ export default {
   modules: ['@nuxtjs/axios', '@nuxtjs/pwa', '@nuxtjs/auth-next'],
 
   axios: {
-    baseURL: 'http://marketplace.prod.tiki-taka.fr/wp-json',
+    baseURL: '/wp/',
+    proxy: true,
+  },
+
+  proxy: {
+    '/wp/': { target: 'http://marketplace.prod.tiki-taka.fr/wp-json', pathRewrite: {'^/wp/': ''} },
   },
 
   pwa: {

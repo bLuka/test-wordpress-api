@@ -24,6 +24,14 @@
         </v-card-text>
       </v-card>
     </div>
+    <div class="mt-16">
+      <v-btn @click="fetchInfo" x-large class="mb-5">fetch user details</v-btn>
+      <v-card>
+        <v-card-text>
+          {{ info }}
+        </v-card-text>
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -32,6 +40,7 @@ export default {
   data() {
     return {
       products: [],
+      info: {},
       email: '',
       pass: '',
     }
@@ -48,28 +57,39 @@ export default {
         alert('You are logged out')
       })
     },
+    fetchInfo() {
+      const config = {
+        headers: { 'Cookie': 'simple-jwt-login-token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2Mjg4MDExOTgsImV4cCI6MTYyODgwNDc5OCwiZW1haWwiOiJkZXYrOEB0aWtpLXRha2EuZnIiLCJpZCI6MTEsInNpdGUiOiJodHRwOlwvXC9tYXJrZXRwbGFjZS5wcm9kLnRpa2ktdGFrYS5mciIsInVzZXJuYW1lIjoiZGV2OEB0aWtpLXRha2EuZnIifQ.VSClzcCulJNU9R1U1cgzf11qrBFTDQijhGyftPWu8KMLzSZmvHvlpBgT51hFKY-FnvUr7GYZV-6EYc0gt-s64Q' }
+      }
+      /*
+const config = {
+    headers: { 'content-type': 'application/x-www-form-urlencoded' }
+}
+
+this.$axios.post(`/post/${id}`, model, config)
+*/
+      this.$axios
+        .get('/wp/wp/v2/users/me', config)
+        .then(({ data }) => (this.info = data))
+    },
     fetchData() {
       this.$axios
-        .get('/wc/v3/products')
+        .get('/wp/wc/store/products')
         .then(({ data }) => (this.products = data))
     },
     login() {
-      this.$auth
-        .loginWith('cookie', {
-          data: {
-            email: this.email,
-            password: this.pass,
-            AUTH_KEY: 'tikitaka-vendor',
-          },
+      console.log("Loggin in...")
+      this.$axios
+        .post('/wp/jwt/auth', {
+          email: this.email,
+          password: this.pass,
+          AUTH_KEY: 'tikitaka-vendor',
         })
         .then(({ data }) => {
-          console.warn(data)
-          this.$forceUpdate()
-          alert('you are in 👍')
+          console.log(data.data.jwt);
+          document.cookie = `simple-jwt-login-token=${data.data.jwt}`;
         })
-        .catch((err) => {
-          console.warn(err)
-        })
+        .catch(console.warn)
     },
   },
 }
