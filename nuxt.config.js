@@ -15,7 +15,7 @@ export default {
 
   css: [],
 
-  plugins: [],
+  plugins: ["@/plugins/api/axios"],
 
   components: true,
 

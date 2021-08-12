@@ -50,7 +50,7 @@ export default {
     },
     fetchData() {
       this.$axios
-        .get('/wc/v3/products')
+        .get('/wc/store/products')
         .then(({ data }) => (this.products = data))
     },
     login() {
